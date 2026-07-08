@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Inventory & Finance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #1a1f3a;
+            --secondary-dark: #252d47;
+            --tertiary-dark: #2d3652;
+            --accent-purple: #6366F1;
+            --accent-light-purple: #818CF8;
+            --text-primary: #ffffff;
+            --text-secondary: #a8adc9;
+            --border-color: #3d4563;
+        }
+
+        * {
+            color-scheme: dark;
+        }
+
+        body {
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1400px;
+        }
+
+        /* Header & Title */
+        h1, h2, h3, h4, h5 {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--secondary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            border-color: var(--border-color);
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: var(--tertiary-dark);
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--border-color);
+        }
+
+        .nav-link.active {
+            color: var(--text-primary);
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--accent-purple);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light-purple);
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            border: none;
+        }
+
+        .btn-outline-primary {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .btn-outline-danger {
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .btn-outline-danger:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+
+        /* Tables */
+        .table {
+            color: var(--text-primary);
+            border-color: var(--border-color);
+            margin-bottom: 0;
+        }
+
+        .table td, .table th {
+            vertical-align: middle;
+            border-color: var(--border-color);
+            padding: 0.75rem;
+        }
+
+        .table-light {
+            background: var(--tertiary-dark);
+            color: var(--text-secondary);
+        }
+
+        .table-light th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            background: var(--tertiary-dark);
+            border-color: var(--border-color);
+        }
+
+        .table thead th {
+            background: var(--tertiary-dark);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table tbody td {
+            background: rgba(45, 54, 82, 0.5);
+        }
+
+        .table tbody tr:hover td {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        /* Forms */
+        input, select, textarea {
+            background: var(--tertiary-dark) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 6px !important;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--text-secondary) !important;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background: var(--tertiary-dark) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--accent-purple) !important;
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
+        }
+
+        .form-control, .form-select {
+            font-size: 0.875rem;
+            height: 2.25rem;
+        }
+
+        .form-control:disabled, .form-select:disabled {
+            background: rgba(45, 54, 82, 0.5) !important;
+            color: var(--text-secondary) !important;
+        }
+
+        /* Spinbutton styling */
+        input[type="number"] {
+            font-size: 0.875rem !important;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* Modals */
+        .modal-content {
+            background: var(--secondary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            border-color: var(--border-color);
+            background: var(--secondary-dark);
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .modal-body {
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            border-color: var(--border-color);
+            background: var(--secondary-dark);
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .bg-success {
+            background: #10b981 !important;
+        }
+
+        .bg-warning {
+            background: #f59e0b !important;
+        }
+
+        .bg-danger {
+            background: #ef4444 !important;
+        }
+
+        /* Alerts */
+        .alert {
+            background: var(--tertiary-dark);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1) !important;
+            border-color: #f59e0b !important;
+            color: #fbbf24 !important;
+        }
+
+        /* Balance Display */
+        .balance-card {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-light-purple) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 2rem;
+            color: white;
+        }
+
+        .balance-card h5 {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Negative balance */
+        .negative {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #fca5a5 !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* Row hover effects */
+        .table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+
+        /* Utility classes */
+        .text-success { color: #10b981 !important; }
+        .text-danger { color: #ef4444 !important; }
+        .text-warning { color: #f59e0b !important; }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">Discord Inventory & Finance</h2>
+                <p class="text-muted mb-0">Простое управление товарами и финансами сервера</p>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="warehouse-tab" data-bs-toggle="tab" data-bs-target="#warehouse-pane" type="button">Склад</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items-pane" type="button">Товары</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions-pane" type="button">Транзакции</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="balance-tab" data-bs-toggle="tab" data-bs-target="#balance-pane" type="button">Баланс</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="warehouse-pane">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Справочник товаров</h5>
+                            <button class="btn btn-primary btn-sm" onclick="addWarehouseItem()">Добавить товар</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Наименование</th>
+                                        <th>Цена</th>
+                                        <th>Наличие</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="warehouse-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="items-pane">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Товары</h5>
+                            <button class="btn btn-primary btn-sm" onclick="addItemRow()">Добавить запись</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Дата</th>
+                                        <th>Позиция</th>
+                                        <th>Количество</th>
+                                        <th>Цена</th>
+                                        <th>Итог</th>
+                                        <th>Статус</th>
+                                        <th>Комментарий</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="items-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="transactions-pane">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Транзакции</h5>
+                            <button class="btn btn-success btn-sm" onclick="addManualTransaction()">Добавить пополнение</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Дата</th>
+                                        <th>Сумма</th>
+                                        <th>Тип</th>
+                                        <th>Статус</th>
+                                        <th>Основание</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactions-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="balance-pane">
+                <div>
+                    <div id="balance-card" class="balance-card mb-4">
+                        <div style="color: rgba(255, 255, 255, 0.9); font-size: 0.875rem; margin-bottom: 0.5rem;">Текущий остаток</div>
+                        <div id="balance-value" class="balance-value">0</div>
+                    </div>
+                    <div id="balance-warning" class="alert alert-danger d-none" style="max-width: 500px;">
+                        <strong>⚠️ Баланс отрицательный!</strong> Нужен контроль расходов.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal для добавления товара в склад -->
+    <div class="modal fade" id="addWarehouseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить товар на склад</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Наименование товара</label>
+                        <input type="text" class="form-control" id="warehouseName">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Цена</label>
+                        <input type="number" class="form-control" id="warehousePrice" step="0.01" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Наличие</label>
+                        <input type="number" class="form-control" id="warehouseQuantity" value="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="submitAddWarehouse()">Добавить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal для добавления пополнения -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить пополнение</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Сумма пополнения</label>
+                        <input type="number" class="form-control" id="transactionAmount" step="0.01" value="100">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="submitAddTransaction()">Пополнить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let warehouseData = [];
+
+        const itemStatusOptions = ['Новый', 'В обработке', 'Выдал', 'Выдано'];
+        const transactionStatusOptions = ['В обработке', 'Выполнено'];
+
+        async function loadData() {
+            const [warehouseRes, itemsRes, transactionsRes, balanceRes] = await Promise.all([
+                fetch('/api/warehouse'),
+                fetch('/api/items'),
+                fetch('/api/transactions'),
+                fetch('/api/balance')
+            ]);
+            warehouseData = await warehouseRes.json();
+            const items = await itemsRes.json();
+            const transactions = await transactionsRes.json();
+            const balance = await balanceRes.json();
+            renderWarehouse(warehouseData);
+            renderItems(items);
+            renderTransactions(transactions);
+            renderBalance(balance.balance);
+        }
+
+        function renderWarehouse(warehouse) {
+            const body = document.getElementById('warehouse-table-body');
+            body.innerHTML = '';
+            warehouse.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td><input class="form-control form-control-sm" value="${item.name}" data-field="name" data-id="${item.id}"></td>
+                    <td><input class="form-control form-control-sm" type="number" step="0.01" value="${item.price}" data-field="price" data-id="${item.id}"></td>
+                    <td><input class="form-control form-control-sm" type="number" value="${item.quantity}" data-field="quantity" data-id="${item.id}"></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="saveWarehouseItem(${item.id})">Сохранить</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteWarehouseItem(${item.id})">Удалить</button>
+                    </td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        function renderItems(items) {
+            const body = document.getElementById('items-table-body');
+            body.innerHTML = '';
+            items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td><input class="form-control form-control-sm" value="${item.date}" data-field="date" data-id="${item.id}"></td>
+                    <td>
+                        <select class="form-select form-select-sm" data-field="position" data-id="${item.id}" onchange="updateItemPrice(${item.id})">
+                            <option value="">-- Выберите товар --</option>
+                            ${warehouseData.map(w => `<option value="${w.name}" ${w.name === item.position ? 'selected' : ''}>${w.name}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td><input class="form-control form-control-sm" type="number" value="${item.quantity}" data-field="quantity" data-id="${item.id}" onchange="updateItemTotal(${item.id})"></td>
+                    <td><input class="form-control form-control-sm" type="number" value="${item.price}" data-field="price" data-id="${item.id}" onchange="updateItemTotal(${item.id})"></td>
+                    <td><input class="form-control form-control-sm" type="number" value="${item.total}" data-field="total" data-id="${item.id}" readonly></td>
+                    <td>
+                        <select class="form-select form-select-sm" data-table="items" data-field="status" data-id="${item.id}">
+                            ${itemStatusOptions.map(opt => `<option value="${opt}" ${opt === item.status ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td><input class="form-control form-control-sm" value="${item.comment || ''}" data-field="comment" data-id="${item.id}"></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="saveItem(${item.id})">Сохранить</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id})">Удалить</button>
+                    </td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        function renderTransactions(transactions) {
+            const body = document.getElementById('transactions-table-body');
+            body.innerHTML = '';
+            transactions.forEach(tx => {
+                const disabled = tx.type === 'Списание' && tx.reference.startsWith('item:');
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${tx.id}</td>
+                    <td>${tx.date}</td>
+                    <td>${tx.amount}</td>
+                    <td>${tx.type}</td>
+                    <td>
+                        ${disabled ? `<span class="badge bg-success">${tx.status}</span>` : `<select class="form-select form-select-sm" data-table="transactions" data-field="status" data-id="${tx.id}">
+                            ${transactionStatusOptions.map(opt => `<option value="${opt}" ${opt === tx.status ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>`}
+                    </td>
+                    <td>${tx.reference}</td>
+                    <td>
+                        ${disabled ? '<span class="text-muted">Авто</span>' : `<button class="btn btn-sm btn-outline-primary" onclick="saveTransaction(${tx.id})">Сохранить</button>`}
+                    </td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        function renderBalance(balance) {
+            const value = document.getElementById('balance-value');
+            const card = document.getElementById('balance-card');
+            const warning = document.getElementById('balance-warning');
+            value.textContent = `${balance.toFixed(2)} ₽`;
+            
+            if (balance < 0) {
+                card.style.background = 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)';
+            } else {
+                card.style.background = 'linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-light-purple) 100%)';
+            }
+            
+            warning.classList.toggle('d-none', balance >= 0);
+        }
+
+        async function addWarehouseItem() {
+            const modal = new bootstrap.Modal(document.getElementById('addWarehouseModal'));
+            modal.show();
+        }
+
+        async function submitAddWarehouse() {
+            const name = document.getElementById('warehouseName').value.trim();
+            const price = Number(document.getElementById('warehousePrice').value || 0);
+            const quantity = Number(document.getElementById('warehouseQuantity').value || 0);
+            
+            if (!name) {
+                alert('Введите наименование товара');
+                return;
+            }
+            
+            const res = await fetch('/api/warehouse', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, price, quantity })
+            });
+            if (res.ok) {
+                document.getElementById('warehouseName').value = '';
+                document.getElementById('warehousePrice').value = '0';
+                document.getElementById('warehouseQuantity').value = '0';
+                bootstrap.Modal.getInstance(document.getElementById('addWarehouseModal')).hide();
+                loadData();
+            } else {
+                const error = await res.json();
+                alert('Ошибка: ' + error.error);
+            }
+        }
+
+        async function saveWarehouseItem(id) {
+            const row = document.querySelector(`input[data-id="${id}"][data-field="name"]`).closest('tr');
+            const payload = {
+                name: row.querySelector('[data-field="name"]').value,
+                price: Number(row.querySelector('[data-field="price"]').value || 0),
+                quantity: Number(row.querySelector('[data-field="quantity"]').value || 0),
+            };
+            const res = await fetch(`/api/warehouse/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                loadData();
+            }
+        }
+
+        async function deleteWarehouseItem(id) {
+            const res = await fetch(`/api/warehouse/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                loadData();
+            }
+        }
+
+        function updateItemPrice(id) {
+            const row = document.querySelector(`select[data-id="${id}"][data-field="position"]`).closest('tr');
+            const position = row.querySelector('[data-field="position"]').value;
+            const warehouseItem = warehouseData.find(w => w.name === position);
+            if (warehouseItem) {
+                row.querySelector('[data-field="price"]').value = warehouseItem.price;
+            }
+            updateItemTotal(id);
+        }
+
+        function updateItemTotal(id) {
+            const row = document.querySelector(`input[data-id="${id}"][data-field="quantity"]`).closest('tr');
+            const quantity = Number(row.querySelector('[data-field="quantity"]').value || 0);
+            const price = Number(row.querySelector('[data-field="price"]').value || 0);
+            row.querySelector('[data-field="total"]').value = (quantity * price).toFixed(2);
+        }
+
+        async function addItemRow() {
+            const payload = {
+                date: new Date().toISOString().slice(0, 10),
+                position: '',
+                quantity: 1,
+                status: 'Новый',
+                comment: ''
+            };
+            const res = await fetch('/api/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                loadData();
+            }
+        }
+
+        async function saveItem(id) {
+            const row = document.querySelector(`input[data-id="${id}"][data-field="date"]`).closest('tr');
+            const payload = {
+                date: row.querySelector('[data-field="date"]').value,
+                position: row.querySelector('[data-field="position"]').value,
+                quantity: Number(row.querySelector('[data-field="quantity"]').value || 0),
+                price: Number(row.querySelector('[data-field="price"]').value || 0),
+                status: row.querySelector('[data-field="status"]').value,
+                comment: row.querySelector('[data-field="comment"]').value,
+            };
+            const res = await fetch(`/api/items/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                loadData();
+            }
+        }
+
+        async function deleteItem(id) {
+            const res = await fetch(`/api/items/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                loadData();
+            }
+        }
+
+        async function addManualTransaction() {
+            const modal = new bootstrap.Modal(document.getElementById('addTransactionModal'));
+            modal.show();
+        }
+
+        async function submitAddTransaction() {
+            const amount = Number(document.getElementById('transactionAmount').value || 0);
+            
+            if (!Number.isFinite(amount) || amount <= 0) {
+                alert('Введите корректную сумму');
+                return;
+            }
+            
+            const res = await fetch('/api/transactions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount })
+            });
+            if (res.ok) {
+                document.getElementById('transactionAmount').value = '100';
+                bootstrap.Modal.getInstance(document.getElementById('addTransactionModal')).hide();
+                loadData();
+            }
+        }
+
+        async function saveTransaction(id) {
+            try {
+                // Find the select element for this transaction using both data-table and data-id
+                const selectElement = document.querySelector(`select[data-table="transactions"][data-id="${id}"][data-field="status"]`);
+                if (!selectElement) {
+                    alert('Ошибка: не удалось найти элемент');
+                    return;
+                }
+                
+                const status = selectElement.value;
+                
+                const res = await fetch(`/api/transactions/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                
+                if (res.ok) {
+                    loadData();
+                } else {
+                    const error = await res.json();
+                    alert('Ошибка при сохранении: ' + (error.error || 'Unknown error'));
+                }
+            } catch (e) {
+                console.error('Error in saveTransaction:', e);
+                alert('Ошибка: ' + e.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
